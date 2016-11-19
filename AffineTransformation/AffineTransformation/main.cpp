@@ -16,6 +16,7 @@
 #define WINDOW_NAME1 "THE SOURCE IMAGE"
 #define WINDOW_NAME2 "THE IMAGE WITH ONLY WARP"
 #define WINDOW_NAME3 "THE IMAGE WITH WARP&ROTATE"
+#define WINDOW_NAME4 "THE IMAGE WITH ONLY ROTATE"
 
 using namespace cv;
 using namespace std;
@@ -38,7 +39,7 @@ int main(int argc, const char * argv[]) {
     //定义一些 Mat 变量
     Mat rotMat(2, 3, CV_32FC1);
     Mat warpMat(2, 3, CV_32FC1);
-    Mat srcImage, dstImageWarp, dstImageWarpRotate;
+    Mat srcImage, dstImageWarp, dstImageWarpRotate, dstImageRotate;
     
     //加载源图像并做一些初始化
     srcImage = imread(PATH+string("1.jpg"),1);
@@ -50,6 +51,7 @@ int main(int argc, const char * argv[]) {
     }
     //设置目标图像的大小和类型与源图像一致
     dstImageWarp = Mat::zeros(srcImage.size(), srcImage.type());
+    dstImageRotate = Mat::zeros(srcImage.size(), srcImage.type());
     
     //设置源图像和目标图像上的三组点以计算仿射变换
     //源图像
@@ -76,11 +78,13 @@ int main(int argc, const char * argv[]) {
     rotMat = getRotationMatrix2D(center, angle, scale);
     //求得旋转后的图像
     warpAffine(dstImageWarp, dstImageWarpRotate, rotMat, dstImageWarpRotate.size());
+    warpAffine(srcImage, dstImageRotate, rotMat, dstImageRotate.size());
     
     //显示结果
     imshow(WINDOW_NAME1, srcImage);
     imshow(WINDOW_NAME2, dstImageWarp);
     imshow(WINDOW_NAME3, dstImageWarpRotate);
+    imshow(WINDOW_NAME4, dstImageRotate);
     
     waitKey(0);
     
