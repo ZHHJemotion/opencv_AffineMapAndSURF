@@ -13,9 +13,9 @@
 #define PATH string("/Users/zhangxingjian/Desktop/Programming/C++/OpenCV/opencv_AffineMapAndSURF/AffineTransformation/AffineTransformation/")
 
 // 窗口标题宏定义
-#define WINDOW_NAME1 "原始图窗口"
-#define WINDOW_NAME2 "经过Warp后的图像"
-#define WINDOW_NAME3 "经过Warp和Rotate后的图像"
+#define WINDOW_NAME1 "THE SOURCE IMAGE"
+#define WINDOW_NAME2 "THE IMAGE WITH ONLY WARP"
+#define WINDOW_NAME3 "THE IMAGE WITH WARP&ROTATE"
 
 using namespace cv;
 using namespace std;
@@ -68,7 +68,32 @@ int main(int argc, const char * argv[]) {
     warpAffine(srcImage, dstImageWarp, warpMat, dstImageWarp.size());
     
     //对图像进行缩放后再旋转
-    //
+    //计算绕图像中心顺时针旋转30°，缩放因子为0.6的旋转矩阵
+    Point center = Point(dstImageWarp.cols/2, dstImageWarp.rows/2);
+    double angle = -30.0; //顺时针旋转为负
+    double scale = 0.6;
+    //计算旋转矩阵
+    rotMat = getRotationMatrix2D(center, angle, scale);
+    //求得旋转后的图像
+    warpAffine(dstImageWarp, dstImageWarpRotate, rotMat, dstImageWarpRotate.size());
+    
+    //显示结果
+    imshow(WINDOW_NAME1, srcImage);
+    imshow(WINDOW_NAME2, dstImageWarp);
+    imshow(WINDOW_NAME3, dstImageWarpRotate);
+    
+    waitKey(0);
     
     return 0;
 }
+
+// --------------------- showHelpText() Function ------------------------------
+static void showHelpText()
+{
+    //输出一些帮助信息
+    printf(   "\n\n\n\t欢迎来到【仿射变换】示例程序~\n\n");
+    std::cout<<"\t当前使用的OpenCV版本为 OpenCV"<<CV_VERSION;
+    //printf("\t当前使用的OpenCV版本为 OpenCV "CV_VERSION);
+    printf( "\n\n\t\t\t\t\t\t\t\t by ZHHJemotion\n\n\n");
+}
+
