@@ -47,22 +47,34 @@ int main(int argc, const char * argv[]) {
     detector.detect(srcImage1, keyPoint1);
     detector.detect(srcImage2, keyPoint2);
     
-    //计算描述符（特征向量）
+    //========================= Features Description ======================================
+    //Use the DescriptorExtractor interface in order to find the feature vector correspondent to the keypoints. Specifically:
+    // 1】Use SurfDescriptorExtractor and its function compute to perform the required calculations.
+    // 2】Use a BFMatcher to match the features vector
+    // 3】Use the function drawMatches to draw the detected matches.
+    
+    // 1】计算描述符（特征向量）
     SurfDescriptorExtractor extractor;
     Mat descriptors1, descriptors2;
     extractor.compute(srcImage1, keyPoint1, descriptors1);
     extractor.compute(srcImage2, keyPoint2, descriptors2);
     
-    //使用Bruteforce进行匹配
+    // 2】使用Bruteforce进行匹配
     //实例化一个匹配器
     BruteForceMatcher<L2<float>> matcher;
+    //BFMatcher matcher(NORM_L2); //这个表述方式和上面的相同
+    // NORM_L2 见 link：http://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#norm
     std::vector<DMatch> matches;
+    //struct DMatch is the Class for matching keypoint descriptors: query descriptor index, train descriptor index, train image index, and distance between descriptors.
     //匹配两幅图中的描述子（descriptors）
     matcher.match(descriptors1, descriptors2, matches);
+    //void DescriptorMatcher::match(const Mat& queryDescriptors, const Mat& trainDescriptors, vector<DMatch>& matches, const Mat& mask=Mat())
     
-    //绘制从两个图像中匹配出的特征关键点
+    // 3】绘制从两个图像中匹配出的特征关键点
     Mat matchesImage;
     drawMatches(srcImage1, keyPoint1, srcImage2, keyPoint2, matches, matchesImage);
+    // =====================================================================================
+    
     //显示匹配图
     namedWindow("the match image", WINDOW_AUTOSIZE);
     imshow("the match image", matchesImage);
